@@ -23,21 +23,33 @@ sum(is.na(data$steps))/length(data$steps)
 
 ## What is mean total number of steps taken per day?
 
-Let's plot the total number of steps:
+Let's plot the total number of steps by day:
 ```{r}
 library(ggplot2)
 library(plyr)
-meanByDay <- ddply(data, .(date), summarize, sum = sum(steps), mean = mean(steps, na.rm=TRUE), median = median(steps, na.rm=TRUE))
+meanByDay <- ddply(data, .(date), summarize, sum = sum(steps, na.rm=TRUE), mean = mean(steps, na.rm=TRUE), median = median(steps, na.rm=TRUE))
 ggplot(data=meanByDay, aes(x=date)) + geom_histogram(aes(y=sum), stat="identity", fill = "blue")
 ggplot(data=meanByDay, aes(x=date)) + geom_histogram(aes(y=mean), stat="identity", fill = "blue")
 ggplot(data=meanByDay, aes(x=date)) + geom_histogram(aes(y=median), stat="identity", fill = "blue")
 
 ```
 
+And then the median and the mean for the whole dataset:
+```{r}
+meanData <- mean(data$steps, na.rm=TRUE)
+medianData <- median(data$steps, na.rm=TRUE)
+```
 
+The mean of steps is `r meanData`, and the median is `r medianData`.
 
 ## What is the average daily activity pattern?
 
+```{r}
+sumByInterval <- ddply(data, .(interval), summarize, mean=mean(steps, na.rm=TRUE))
+intervalWithMaxSteps <- sumByInterval$interval[which.max(sumByInterval$mean)]
+
+ggplot(sumByInterval, aes(x=interval, y=mean, group=1)) + geom_line() + geom_vline(xintercept=intervalWithMaxSteps, col="Blue")
+```
 
 
 ## Imputing missing values
