@@ -97,7 +97,7 @@ The mean of steps is 37.3826, and the median is 0.
 sumByInterval <- ddply(data, .(interval), summarize, mean=mean(steps, na.rm=TRUE))
 intervalWithMaxSteps <- sumByInterval$interval[which.max(sumByInterval$mean)]
 
-ggplot(sumByInterval, aes(x=interval, y=mean, group=1)) + geom_line() + geom_vline(xintercept=intervalWithMaxSteps, col="Blue")
+ggplot(sumByInterval, aes(x=interval, y=mean, group=1)) + geom_line() + geom_vline(xintercept=intervalWithMaxSteps, col="Blue", size=1.5, alpha=0.5)
 ```
 
 ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
@@ -105,6 +105,46 @@ ggplot(sumByInterval, aes(x=interval, y=mean, group=1)) + geom_line() + geom_vli
 
 ## Imputing missing values
 
+Let's calculate the missing values:
 
+```r
+naCount <- sum(is.na(data$steps))
+```
+
+There are 2304 missing values for the steps variable.
+
+We will impute the missing value by using the mean of the interval, as it seems to be pattern depending on the time in the day.
+
+
+```r
+dataJoinWithMeans <- join(data, sumByInterval, by="interval")
+dataJoinWithMeans$steps[is.na(dataJoinWithMeans$steps)] <- dataJoinWithMeans$mean[is.na(dataJoinWithMeans$steps)]
+
+naCount <- sum(is.na(dataJoinWithMeans$steps))
+```
+
+Now, there is 0 missing values.
+
+Next we'll see if imputing values had impact comparing to the previous histogram:
+
+```r
+imputedMeanByDay <- ddply(dataJoinWithMeans, .(date), summarize, sum = sum(steps, na.rm=FALSE), mean = mean(steps, na.rm=FALSE), median = median(steps, na.rm=FALSE))
+joinDF <- merge(meanByDay, imputedMeanByDay, by="date")
+# colnames(joinDF)
+# imputedMeanByDay$fill <- rep("red", nrow(imputedMeanByDay))
+# longDF <- rbind(meanByDay, imputedMeanByDay)
+ggplot(data=imputedMeanByDay, aes(x=date)) + geom_histogram(aes(y=sum), stat="identity", fill="blue")
+```
+
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
+
+And then the median and the mean for the whole dataset:
+
+```r
+meanDataImpute <- mean(dataJoinWithMeans$steps, na.rm=TRUE)
+medianDataImpute <- median(dataJoinWithMeans$steps, na.rm=TRUE)
+```
+
+The mean is 37.3826 (was 37.3826), and median is 0 (was 0).
 
 ## Are there differences in activity patterns between weekdays and weekends?

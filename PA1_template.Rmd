@@ -44,16 +44,50 @@ The mean of steps is `r meanData`, and the median is `r medianData`.
 
 ## What is the average daily activity pattern?
 
-```{r}
+```{r,fig.width=9}
 sumByInterval <- ddply(data, .(interval), summarize, mean=mean(steps, na.rm=TRUE))
 intervalWithMaxSteps <- sumByInterval$interval[which.max(sumByInterval$mean)]
 
-ggplot(sumByInterval, aes(x=interval, y=mean, group=1)) + geom_line() + geom_vline(xintercept=intervalWithMaxSteps, col="Blue")
+ggplot(sumByInterval, aes(x=interval, y=mean, group=1)) + geom_line() + geom_vline(xintercept=intervalWithMaxSteps, col="Blue", size=1.5, alpha=0.5)
 ```
 
 
 ## Imputing missing values
 
+Let's calculate the missing values:
+```{r, results='hide'}
+naCount <- sum(is.na(data$steps))
+```
 
+There are `r naCount` missing values for the steps variable.
+
+We will impute the missing value by using the mean of the interval, as it seems to be pattern depending on the time in the day.
+
+```{r}
+dataJoinWithMeans <- join(data, sumByInterval, by="interval")
+dataJoinWithMeans$steps[is.na(dataJoinWithMeans$steps)] <- dataJoinWithMeans$mean[is.na(dataJoinWithMeans$steps)]
+
+naCount <- sum(is.na(dataJoinWithMeans$steps))
+```
+
+Now, there is `r naCount` missing values.
+
+Next we'll see if imputing values had impact comparing to the previous histogram:
+```{r}
+imputedMeanByDay <- ddply(dataJoinWithMeans, .(date), summarize, sum = sum(steps, na.rm=FALSE), mean = mean(steps, na.rm=FALSE), median = median(steps, na.rm=FALSE))
+joinDF <- merge(meanByDay, imputedMeanByDay, by="date")
+# colnames(joinDF)
+# imputedMeanByDay$fill <- rep("red", nrow(imputedMeanByDay))
+# longDF <- rbind(meanByDay, imputedMeanByDay)
+ggplot(data=imputedMeanByDay, aes(x=date)) + geom_histogram(aes(y=sum), stat="identity", fill="blue")
+```
+
+And then the median and the mean for the whole dataset:
+```{r}
+meanDataImpute <- mean(dataJoinWithMeans$steps, na.rm=TRUE)
+medianDataImpute <- median(dataJoinWithMeans$steps, na.rm=TRUE)
+```
+
+The mean is `r meanDataImpute` (was `r meanData`), and median is `r medianDataImpute` (was `r medianData`).
 
 ## Are there differences in activity patterns between weekdays and weekends?
