@@ -148,3 +148,29 @@ medianDataImpute <- median(dataJoinWithMeans$steps, na.rm=TRUE)
 The mean is 37.3826 (was 37.3826), and median is 0 (was 0).
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+
+```r
+weekdayOrWeekend <- function (x) {
+    if(weekdays(x) %in% c("Saturday", "Sunday")) {
+        "Weekend"
+    } else {
+        "Weekday"
+    }
+}
+dataJoinWithMeans$weekday <- as.factor(sapply(dataJoinWithMeans$date, weekdayOrWeekend))
+
+dataMeanByWeekdayFactor <- ddply(dataJoinWithMeans, .(weekday, interval), summarize, mean = mean(steps, na.rm=FALSE))
+
+# Highlight zone of interest, ie interval where the mean is greater than 50
+moreThan50StepsInterval <- ddply(dataMeanByWeekdayFactor[dataMeanByWeekdayFactor$mean >= 50,], .(weekday), summarize, xmin = min(interval), xmax = max(interval), ymin = -Inf, ymax = Inf)
+
+ggplot(dataMeanByWeekdayFactor, aes(x=interval,y=mean)) +
+    facet_grid(weekday ~ .) +
+    geom_rect(data=moreThan50StepsInterval,
+              aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),
+              fill="blue", inherit.aes=FALSE, alpha=0.2) +
+    geom_line()
+```
+
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
