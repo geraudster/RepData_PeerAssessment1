@@ -82,7 +82,7 @@ meanData <- mean(aggregationsByDay$sum, na.rm=TRUE)
 medianData <- median(aggregationsByDay$sum, na.rm=TRUE)
 ```
 
-The mean of steps is 9354.2295, and the median is 10395.
+The mean of steps is **9354.2295**, and the median is **10395**.
 
 ## What is the average daily activity pattern?
 
@@ -93,6 +93,7 @@ meanByInterval <- ddply(data, .(interval), summarize, mean=mean(steps, na.rm=TRU
 intervalWithMaxSteps <- meanByInterval$interval[which.max(meanByInterval$mean)]
 ```
 
+The interval with max steps is **835**.
 Let's plot it together, the interval with the greatests number of steps is indicated 
 by the blue vertical line:
 
@@ -122,7 +123,7 @@ Let's calculate the number of missing values:
 naCount <- sum(is.na(data$steps))
 ```
 
-There are 2304 missing values for the steps variable.
+There are **2304** missing values for the steps variable.
 
 We will impute the missing value by using the mean of the interval, as it seems to be a pattern depending on the time in the day.
 First we join the initial dataset with the means by interval computed above:
@@ -169,7 +170,7 @@ Finally we check the number of NA values:
 naCount <- sum(is.na(dataAfterImpute$steps))
 ```
 
-Now, there is 0 missing values.
+Now, there is **0** missing values.
 
 Next we'll see if imputing values had impact comparing to the previous histogram:
 
@@ -200,7 +201,7 @@ meanDataImpute <- mean(aggregationsByDayAfterImpute$sum, na.rm=FALSE)
 medianDataImpute <- median(aggregationsByDayAfterImpute$sum, na.rm=FALSE)
 ```
 
-The mean is 1.0766 &times; 10<sup>4</sup> (was 9354.2295), and median is 1.0766 &times; 10<sup>4</sup> (was 10395).
+The mean is **1.0766 &times; 10<sup>4</sup>** (was 9354.2295), and median is **1.0766 &times; 10<sup>4</sup>** (was 10395).
 
 ## Are there differences in activity patterns between weekdays and weekends?
 

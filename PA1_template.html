@@ -252,7 +252,7 @@ str(data)
 medianData &lt;- median(aggregationsByDay$sum, na.rm=TRUE)
 </code></pre>
 
-<p>The mean of steps is 9354.2295, and the median is 10395.</p>
+<p>The mean of steps is <strong>9354.2295</strong>, and the median is <strong>10395</strong>.</p>
 
 <h2>What is the average daily activity pattern?</h2>
 
@@ -262,7 +262,8 @@ medianData &lt;- median(aggregationsByDay$sum, na.rm=TRUE)
 intervalWithMaxSteps &lt;- meanByInterval$interval[which.max(meanByInterval$mean)]
 </code></pre>
 
-<p>Let&#39;s plot it together, the interval with the greatests number of steps is indicated 
+<p>The interval with max steps is <strong>835</strong>.
+Let&#39;s plot it together, the interval with the greatests number of steps is indicated 
 by the blue vertical line:</p>
 
 <pre><code class="r">ggplot(meanByInterval, aes(x=interval, y=mean, group=1)) +
@@ -291,7 +292,7 @@ where we can see an activity in steps</li>
 <pre><code class="r">naCount &lt;- sum(is.na(data$steps))
 </code></pre>
 
-<p>There are 2304 missing values for the steps variable.</p>
+<p>There are <strong>2304</strong> missing values for the steps variable.</p>
 
 <p>We will impute the missing value by using the mean of the interval, as it seems to be a pattern depending on the time in the day.
 First we join the initial dataset with the means by interval computed above:</p>
@@ -333,7 +334,7 @@ head(dataAfterImpute)
 <pre><code class="r">naCount &lt;- sum(is.na(dataAfterImpute$steps))
 </code></pre>
 
-<p>Now, there is 0 missing values.</p>
+<p>Now, there is <strong>0</strong> missing values.</p>
 
 <p>Next we&#39;ll see if imputing values had impact comparing to the previous histogram:</p>
 
@@ -362,7 +363,7 @@ ggplot(longDF, aes(sum, fill=group)) +
 medianDataImpute &lt;- median(aggregationsByDayAfterImpute$sum, na.rm=FALSE)
 </code></pre>
 
-<p>The mean is 1.0766 &times; 10<sup>4</sup> (was 9354.2295), and median is 1.0766 &times; 10<sup>4</sup> (was 10395).</p>
+<p>The mean is <strong>1.0766 &times; 10<sup>4</sup></strong> (was 9354.2295), and median is <strong>1.0766 &times; 10<sup>4</sup></strong> (was 10395).</p>
 
 <h2>Are there differences in activity patterns between weekdays and weekends?</h2>
 
